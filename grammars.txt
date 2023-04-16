@@ -19,25 +19,22 @@ f @
 
 
 
-d a h g @ b
+d a b g h @
 S A B C
-ACB Cbb Ba
+ACB CbB Ba
 da BC
 g @
 h @
 
 
 
-a b d g
-S A B C
-A
-aB Ad
-b
-g
+a b c d
+S
+aSb c d
 
 
 
-a b g @ d
+a b d g @
 S A D B C
 A
 aBD
@@ -47,11 +44,11 @@ g
 
 
 
-* ( a ) * , @
+( a ) , @
 S L T
 (L) a
 ST
-,ST* @
+,ST @
 
 
 
@@ -59,4 +56,22 @@ a b @
 S A B
 AaAb BbBa
 @
+@
+
+
+
+( ) @
+S A
+(S)A ()A
+SA @
+
+
+
+y x @ b
+E H G B V A
+yGH
+xH @
+A B
+bV
+A bA
 @
