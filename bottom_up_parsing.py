@@ -8,33 +8,40 @@ def get_derivations(grammar, symbol):
     return list(rules)
 
 
-def calculate_closure(closures, grammar, non_terminals):
+def get_closure(closures, symbol):
+    next_closure = []
     for closure in closures.values():
-        for symbol in closure:
+        for element in closure:
             flag = False
-            for element in symbol:
-                if element == '•':
+            for item in element:
+                if item == '•':
                     flag = True
+                    continue
+                
+                if item != symbol and flag:
+                    break
+                elif flag:
+                    next_closure.append(element)
 
-                if flag == True and element in non_terminals:
-                    rules = get_derivations(grammar, element)
-                    for derivations in rules:
-                        for derivation in grammar[derivations]:
-                            update = derivation
-                            if element in closures:
-                                old_closure = closures[element]
-                                old_closure.append('•' + update)
-                                update = old_closure
-                            else:
-                                update = ['•' + update]
-                            closures[element] = update
+    return next_closure
 
 
-def first_closure(grammar):
+def calculate_closure(closures, grammar, non_terminals):
+    pass
+
+
+def calculate_closure(grammar, non_terminals, symbol):
     closures = {}
-    closure = grammar['|']
-    closure = ['•' + closure[0]]
-    closures['|'] = closure
+
+    for rule, items in grammar.items():
+        for derivation in items:
+            if symbol in closures:
+                old_closure = closures[symbol]
+                old_closure.append('•' + derivation)
+                closure = old_closure
+            else:
+                closure = ['•' + derivation]
+                closures[symbol] = closure
 
     return closures
 
@@ -53,10 +60,12 @@ def main():
         productions = input().split()
         grammar[non_terminal] = productions
 
-    closures = first_closure(grammar)
-    calculate_closure(closures, grammar, non_terminals)
+    closures = calculate_closure(grammar, non_terminals, '|')
+    #calculate_closure(closures, grammar, non_terminals)
 
     print(closures)
+
+    print(get_closure(closures, 'E'))
 
 
 if __name__ == '__main__':
