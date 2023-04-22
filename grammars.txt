@@ -8,6 +8,14 @@ FY
 
 
 
++ i * ( )
+E T F
+E+T T
+T*F F
+(E) i
+
+
+
 a h c b @ g f
 S B C D E F
 aBDh
