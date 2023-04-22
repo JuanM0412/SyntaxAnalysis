@@ -1,11 +1,9 @@
 def first(symbol, alphabet, productions):
   first_set = set()
-
   if symbol in alphabet:
     return symbol
   
   derivations = productions[symbol]
-
   for rule in derivations:
     if rule == "@":
       first_set.update("@")
@@ -27,7 +25,6 @@ def first(symbol, alphabet, productions):
 
 def get_derivations(grammar, symbol):
   rules = set()
-
   for non_terminal, derivations in grammar.items():
     for item in derivations:
       if symbol in item:
@@ -39,7 +36,6 @@ def get_derivations(grammar, symbol):
 def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
   follow_set = set()
   past_element = False
-
   if symbol == start_symbol:
     follow_set.update("$")
     
@@ -47,24 +43,26 @@ def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
     for derivation in grammar[rule]:
       for element in derivation:
         if element == symbol:
-          past_element = True     
+          past_element = True
+
         if element.isupper() and past_element == True:
           if element != symbol and "@" in firsts[element]:
             follow_set.update(firsts[element])
             if "@" not in firsts[element]:
-              past_element = False       
+              past_element = False  
+
         if not element.isupper() and past_element == True:
           follow_set.update(firsts[element])
           past_element = False
+          
       past_element = False
 
   return follow_set   
 
 
-def follow(rules, symbol, firsts, grammar, follows, calculated):
+def follow_third_rule(rules, symbol, firsts, grammar, follows, calculated):
   follow_set = set(follows[symbol])
   past_element = False
-
   if symbol in calculated:
     calculated.discard(symbol)
     return follow_set
@@ -75,11 +73,13 @@ def follow(rules, symbol, firsts, grammar, follows, calculated):
           last_element = derivation[len(derivation) - 1]
           if element == symbol:
             past_element = True
+
           if element.isupper() and past_element == True:
             if element != symbol and "@" in firsts[element]:
               derivations = get_derivations(grammar, element)
               calculated.update(symbol)
-              follow_set.update(follow(derivations, element, firsts, grammar, follows, calculated))
+              follow_set.update(follow_third_rule(derivations, element, firsts, grammar, follows, calculated))
+
             if symbol == last_element and rule != symbol:
               calculated.update(symbol)
               follow_set.update(set(follows[rule]))
@@ -99,13 +99,16 @@ def parsing_table(grammar, follow, first, alphabet, non_terminals):
             parsing_table[(rule, terminal)] = derivation
         else:
           parsing_table[(rule, derivation[0])] = derivation
+
       elif "@" in first[derivation[0]] and (rule, derivation[0]) not in parsing_table:
         if "$" in follow[rule]:
           parsing_table[(rule, "$")] = derivation
         for terminal in follow[rule]:
           parsing_table[(rule, terminal)] = derivation
+
       elif (rule, derivation[0]) in parsing_table:
         return False
+  
   return parsing_table
 
 
@@ -161,7 +164,7 @@ def main():
   for non_terminal in grammar:
     calculate = set()
     rule = get_derivations(grammar, non_terminal)
-    non_terminal_follow = follow(rule, non_terminal, all_firsts, grammar, all_follows, calculate)
+    non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows, calculate)
     all_follows[non_terminal] = list(non_terminal_follow)
       
   #print(f"First set: \n{all_firsts}")
