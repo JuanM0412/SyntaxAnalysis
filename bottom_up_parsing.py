@@ -1,21 +1,24 @@
-def get_item(grammar, canonical, non_terminals):
+def get_item(grammar, rule, non_terminals):
     closures = {}
-    rule = '|'
+    closure = non_terminal_case(rule, grammar, non_terminals)
+    closures[rule] = closure
+
+    return closures
+
+
+def non_terminal_case(rule, grammar, non_terminals):
+    closures = []
     calculated = set()
-    initial_closure = grammar[canonical].copy()
+    initial_closure = grammar[rule].copy()
     while initial_closure:
         for derivations in initial_closure:
             for derivation in derivations:
-                if derivations not in calculated and canonical not in closures:
-                    closure = [('•' + derivations, rule)]
-                    closures[canonical] = closure
+                if derivations not in calculated and rule not in closures:
+                    closure = ('•' + derivations, rule)
+                    closures.append(closure)
                     initial_closure.remove(derivations)
-                elif derivations not in calculated and canonical in closures:
-                    current_closure = closures[canonical]
-                    current_closure = current_closure.append(('•' + derivations, rule))
-                    initial_closure.remove(derivations)
-
-                if derivation[0] in non_terminals and derivation not in calculated:
+                    
+                if derivation[0] in non_terminals and derivation not in calculated and rule != derivation[0]:
                     rule = derivation
                     tmp = grammar[derivation[0]].copy()
                     i = 0
@@ -31,33 +34,48 @@ def get_item(grammar, canonical, non_terminals):
     return closures
 
 
-def closure(closures, grammar, symbol):
+def closure(closures, grammar, symbol, non_terminals):
     closure_to_calculate = closures[symbol].copy()
     new_closure = ''
     for closure in closure_to_calculate:
         rule, item, flag = closure[1], closure[0], False
         i = item.index('•')
-        symbol = item[i + 1]
-        for element in item:
-            if element == '•':
-                flag = True
-                continue
+        if item[len(item) - 1] != '•':
+            symbol = item[i + 1]
+            for element in item:
+                if element == '•':
+                    flag = True
+                    continue
 
-            if flag == True:
-                new_closure = list(item)
-                j = i + 1
-                aux, new_closure[j] = new_closure[j], new_closure[i] 
-                new_closure[i] = aux
-                new_closure = ''.join(new_closure)
-            
-            if symbol not in closures:
-                closures[symbol] = [(new_closure, rule)]
-            else:
-                tmp = closures[symbol]
-                tmp.append((new_closure, rule))
-                closures[symbol] = tmp
+                if flag == True:
+                    new_closure = list(item)
+                    j = i + 1
+                    aux, new_closure[j] = new_closure[j], new_closure[i] 
+                    new_closure[i] = aux
+                    new_closure = ''.join(new_closure)
+                    index = new_closure.index('•')
+                    new_closure = [(new_closure, rule)]
+                    if index + 1 < len(item) and new_closure[0][0][index + 1] in non_terminals:
+                        add_to_closure = non_terminal_case(new_closure[0][0][index + 1], grammar, non_terminals)
+                        k = 0
+                        while k < len(add_to_closure):
+                            new_closure.append(add_to_closure[k])
+                            k += 1
 
-            break
+                    if symbol not in closures:
+                        closures[symbol] = new_closure
+                    else:
+                        compare_with = closures[symbol]
+                        if new_closure in compare_with:
+                            tmp = closures[symbol]
+                            tmp.append((new_closure, rule))
+                            closures[symbol + symbol] = tmp
+                        else:
+                            tmp = closures[symbol]
+                            tmp.append((new_closure, rule))
+                            closures[symbol] = tmp
+
+                    break
     
     return closures
 
@@ -77,7 +95,7 @@ def main():
         grammar[non_terminal] = productions
 
     closures = get_item(grammar, non_terminals[0], non_terminals)
-    closures = closure(closures, grammar, '|')
+    closures = closure(closures, grammar, '|', non_terminals)
     print(closures)
 
 
