@@ -66,15 +66,15 @@ def closure(closures, grammar, symbol, non_terminals):
                         closures[symbol] = new_closure
                     else:
                         compare_with = closures[symbol]
-                        if new_closure in compare_with:
+                        if new_closure[0] in compare_with:
                             tmp = closures[symbol]
-                            tmp.append((new_closure, rule))
+                            tmp = tmp + new_closure
                             closures[symbol + symbol] = tmp
                         else:
                             tmp = closures[symbol]
-                            tmp.append((new_closure, rule))
+                            tmp = tmp + new_closure
                             closures[symbol] = tmp
-
+                            
                     break
     
     return closures
@@ -96,6 +96,8 @@ def main():
 
     closures = get_item(grammar, non_terminals[0], non_terminals)
     closures = closure(closures, grammar, '|', non_terminals)
+    closures = closure(closures, grammar, 'E', non_terminals)
+    closures = closure(closures, grammar, '+', non_terminals)
     print(closures)
 
 
