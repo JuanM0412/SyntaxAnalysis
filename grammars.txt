@@ -88,4 +88,4 @@ A bA
 
 a b c
 S
-aSa bSb C
+aSa bSb c
