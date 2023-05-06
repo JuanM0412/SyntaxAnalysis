@@ -34,13 +34,36 @@ def non_terminal_case(rule, grammar, non_terminals):
     return closures
 
 
-def closure(closures, grammar, symbol, non_terminals):
-    closure_to_calculate = closures[symbol].copy()
+def prototype(state_to_validate, canonical):
+    pass
+
+
+def search_rule(canonical, symbol):
+    rules = []
+    for closure in canonical:
+        for elements in closure.values():
+            for element in elements:
+                derivation = element[0]
+                i = derivation.index('•')
+                if i + 1 < len(derivation) and derivation[i + 1] == symbol:
+                    rules.append(element)
+
+    return rules
+
+
+def get_closure(closures, grammar, symbol, non_terminals):
+    new_state = {}
+
+    if symbol != non_terminals[1]:
+        closure_to_calculate = search_rule(closures, symbol)
+    else:
+        closure_to_calculate = closures[0]['|'].copy()
+
     new_closure = ''
     for closure in closure_to_calculate:
         rule, item, flag = closure[1], closure[0], False
         i = item.index('•')
-        if item[len(item) - 1] != '•':
+        if item[len(item) - 1] != '•' and item[i + 1] == symbol:
             symbol = item[i + 1]
             for element in item:
                 if element == '•':
@@ -62,22 +85,18 @@ def closure(closures, grammar, symbol, non_terminals):
                             new_closure.append(add_to_closure[k])
                             k += 1
 
-                    if symbol not in closures:
-                        closures[symbol] = new_closure
+                    if symbol not in new_state:
+                        new_state[symbol] = new_closure
                     else:
-                        compare_with = closures[symbol]
-                        if new_closure[0] in compare_with:
-                            tmp = closures[symbol]
-                            tmp = tmp + new_closure
-                            closures[symbol + symbol] = tmp
-                        else:
-                            tmp = closures[symbol]
-                            tmp = tmp + new_closure
-                            closures[symbol] = tmp
+                        tmp = new_state[symbol]
+                        tmp = tmp + new_closure
+                        new_state[symbol] = tmp
                             
                     break
+
+    prototype(new_state, closures)
     
-    return closures
+    return new_state
 
 
 def main():
@@ -94,11 +113,16 @@ def main():
         productions = input().split()
         grammar[non_terminal] = productions
 
-    closures = get_item(grammar, non_terminals[0], non_terminals)
-    closures = closure(closures, grammar, '|', non_terminals)
-    closures = closure(closures, grammar, 'E', non_terminals)
-    closures = closure(closures, grammar, '+', non_terminals)
+    closures = []
+    closures.append(get_item(grammar, non_terminals[0], non_terminals))
+    closures.append(get_closure(closures, grammar, 'E', non_terminals))
+    closures.append(get_closure(closures, grammar, 'T', non_terminals))
+    closures.append(get_closure(closures, grammar, 'F', non_terminals))
+    closures.append(get_closure(closures, grammar, '+', non_terminals))
+    closures.append(get_closure(closures, grammar, '*', non_terminals))
     print(closures)
+
+    search_rule(closures, 'E')
 
 
 if __name__ == '__main__':
