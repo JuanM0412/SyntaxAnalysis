@@ -34,7 +34,7 @@ def non_terminal_case(rule, grammar, non_terminals):
     return closures
 
 
-def prototype(state_to_validate, canonical):
+def check_repetitions(state_to_validate, canonical):
     for closure in canonical:
         for element in state_to_validate:
             if element in closure.values():
@@ -54,7 +54,8 @@ def search_rule(canonical, symbol):
                 if i + 1 < len(derivation) and derivation[i + 1] == symbol:
                     items.append(element)
 
-            rules.append(items)
+            if items not in rules:
+                rules.append(items)
 
     return rules
 
@@ -98,7 +99,7 @@ def get_closure(canonical, grammar, symbol, non_terminals):
                                 
                         break
 
-            if not prototype(new_state.values(), canonical):
+            if not check_repetitions(new_state.values(), canonical):
                 new_state = {}
 
     
@@ -124,12 +125,18 @@ def main():
     closures.append(get_closure(closures, grammar, 'E', non_terminals))
     closures.append(get_closure(closures, grammar, 'T', non_terminals))
     closures.append(get_closure(closures, grammar, 'F', non_terminals))
+    closures.append(get_closure(closures, grammar, '(', non_terminals))
+    closures.append(get_closure(closures, grammar, '(', non_terminals))
     closures.append(get_closure(closures, grammar, '+', non_terminals))
     closures.append(get_closure(closures, grammar, '*', non_terminals))
-    closures.append(get_closure(closures, grammar, 'T', non_terminals))
-    closures.append(get_closure(closures, grammar, '(', non_terminals))
     closures.append(get_closure(closures, grammar, 'E', non_terminals))
-    print(closures)
+    closures.append(get_closure(closures, grammar, 'T', non_terminals))
+    closures.append(get_closure(closures, grammar, 'F', non_terminals))
+    
+    i = 0
+    for closure in closures:
+        print(f'state {i}: {closure}')
+        i += 1
 
 
 if __name__ == '__main__':
