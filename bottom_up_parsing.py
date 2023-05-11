@@ -73,6 +73,8 @@ def search_rule(canonical, symbol):
 
 
 def get_closure(canonical, grammar, symbols, non_terminals):
+    r = 1
+    calculated_items = set()
     for symbol in symbols:
         new_state = {}
         closure_to_calculate = search_rule(canonical, symbol)
@@ -81,7 +83,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
             for closure in closures:
                 rule, item, flag = closure[1], closure[0], False
                 i = item.index('•')
-                if item[len(item) - 1] != '•' and item[i + 1] == symbol:
+                if item[len(item) - 1] != '•' and item[i + 1] == symbol and closure not in calculated_items:
                     symbol = item[i + 1]
                     for element in item:
                         if element == '•':
@@ -95,6 +97,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
                             new_closure[i] = aux
                             new_closure = ''.join(new_closure)
                             index = new_closure.index('•')
+                            calculated_items.add(closure)
                             new_closure = [(new_closure, rule)]
                             if index + 1 < len(item) and new_closure[0][0][index + 1] in non_terminals:
                                 add_to_closure = non_terminal_case(new_closure[0][0][index + 1], grammar, non_terminals)
@@ -109,7 +112,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
                                 tmp = new_state[symbol]
                                 tmp = tmp + new_closure
                                 new_state[symbol] = tmp
-                                    
+    
                             break
 
                 if not check_repetitions(new_state.values(), canonical):
@@ -118,6 +121,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
             if new_state and new_state not in canonical:
                 canonical.append(new_state)
                 symbols += (get_symbols(canonical))
+                r += 1
 
 
 def main():
