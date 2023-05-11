@@ -120,7 +120,8 @@ def get_closure(canonical, grammar, symbols, non_terminals):
 
             if new_state and new_state not in canonical:
                 canonical.append(new_state)
-                symbols += (get_symbols(canonical))
+                new_state = {}
+                symbols += (get_symbols(canonical[r::]))
                 r += 1
 
 
