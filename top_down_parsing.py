@@ -5,18 +5,18 @@ def first(symbol, alphabet, productions):
   
   derivations = productions[symbol]
   for rule in derivations:
-    if rule == "@":
-      first_set.update("@")
+    if rule == "ε":
+      first_set.update("ε")
       continue
 
     for element in rule:
       partial_first = first(element, alphabet, productions)
-      if "@" in partial_first:
+      if "ε" in partial_first:
         first_set.update(partial_first)
 
       else:
         new_set = set(partial_first)
-        new_set.discard("@")
+        new_set.discard("ε")
         first_set.update(new_set)
         break
 
@@ -46,9 +46,9 @@ def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
           past_element = True
 
         if element.isupper() and past_element == True:
-          if element != symbol and "@" in firsts[element]:
+          if element != symbol and "ε" in firsts[element]:
             follow_set.update(firsts[element])
-            if "@" not in firsts[element]:
+            if "ε" not in firsts[element]:
               past_element = False  
 
         if not element.isupper() and past_element == True:
@@ -75,7 +75,7 @@ def follow_third_rule(rules, symbol, firsts, grammar, follows, calculated):
             past_element = True
 
           if element.isupper() and past_element == True:
-            if element != symbol and "@" in firsts[element]:
+            if element != symbol and "ε" in firsts[element]:
               derivations = get_derivations(grammar, element)
               calculated.update(symbol)
               follow_set.update(follow_third_rule(derivations, element, firsts, grammar, follows, calculated))
@@ -93,14 +93,14 @@ def parsing_table(grammar, follow, first, alphabet, non_terminals):
   parsing_table = {}
   for rule, derivations in grammar.items():
     for derivation in derivations:
-      if ((derivation[0] in alphabet and derivation[0] != "@") or (derivation[0] in non_terminals and "@" not in first[derivation[0]])) and (rule, derivation[0]) not in parsing_table:
+      if ((derivation[0] in alphabet and derivation[0] != "ε") or (derivation[0] in non_terminals and "ε" not in first[derivation[0]])) and (rule, derivation[0]) not in parsing_table:
         if(derivation[0] in non_terminals):
           for terminal in first[derivation[0]]:
             parsing_table[(rule, terminal)] = derivation
         else:
           parsing_table[(rule, derivation[0])] = derivation
 
-      elif "@" in first[derivation[0]] and (rule, derivation[0]) not in parsing_table:
+      elif "ε" in first[derivation[0]] and (rule, derivation[0]) not in parsing_table:
         if "$" in follow[rule]:
           parsing_table[(rule, "$")] = derivation
         for terminal in follow[rule]:
@@ -133,7 +133,7 @@ def analyzer(string, stack, alphabet, table):
       for element in derivation[::-1]:
         stack.append(element)
       symbol = stack.pop()
-      if symbol == "@":
+      if symbol == "ε":
         symbol = stack.pop()
   
   return True
@@ -158,7 +158,7 @@ def main():
 
   for non_terminal in grammar:
     rule = get_derivations(grammar, non_terminal)
-    non_trerminal_follow = follow_second_rule(rule, non_terminal, all_firsts, grammar, non_terminals[0]).difference("@")
+    non_trerminal_follow = follow_second_rule(rule, non_terminal, all_firsts, grammar, non_terminals[0]).difference("ε")
     all_follows[non_terminal] = list(non_trerminal_follow)
 
   for non_terminal in grammar:
@@ -167,10 +167,10 @@ def main():
     non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows, calculate)
     all_follows[non_terminal] = list(non_terminal_follow)
       
-  #print(f"First set: \n{all_firsts}")
-  #print(f"Follow set: \n{all_follows}", end='\n')
+  print(f"First set: \n{all_firsts}")
+  print(f"Follow set: \n{all_follows}", end='\n')
 
-  parsing = parsing_table(grammar, all_follows, all_firsts, alphabet, non_terminals)
+  """parsing = parsing_table(grammar, all_follows, all_firsts, alphabet, non_terminals)
   if parsing == False:
     print("This grammar is not LL1")
   else:
@@ -187,7 +187,7 @@ def main():
       if result == True:
         print(f"{string} is valid")
       else:
-        print(f"{string} is invalid")
+        print(f"{string} is invalid")"""
 
 
 if __name__ == "__main__":
