@@ -25,7 +25,7 @@ def non_terminal_case(rule, grammar, non_terminals):
     while initial_closure:
         for derivations in initial_closure:
             for derivation in derivations:
-                if derivations not in calculated and rule not in closures:
+                if (derivations not in calculated or derivations == '@') and rule not in closures:
                     closure = ('•' + derivations, rule)
                     closures.append(closure)
                     initial_closure.remove(derivations)
@@ -83,7 +83,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
             for closure in closures:
                 rule, item, flag = closure[1], closure[0], False
                 i = item.index('•')
-                if item[len(item) - 1] != '•' and item[i + 1] == symbol and closure not in calculated_items:
+                if item[len(item) - 1] != '•' and item[i + 1] == symbol and symbol != '@' and closure not in calculated_items:
                     symbol = item[i + 1]
                     for element in item:
                         if element == '•':
