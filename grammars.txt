@@ -1,9 +1,9 @@
-i ( ) + * @
+i ( ) + * ε
 E R T Y F
 TR
-+TR @
++TR ε
 FY
-*FY @
+*FY ε
 (E) i
 
 
@@ -16,23 +16,23 @@ T*F F
 
 
 
-a h c b @ g f
+a h c b ε g f
 S B C D E F
 aBDh
 cC
-bC @
+bC ε
 EF
-g @
-f @
+g ε
+f ε
 
 
 
-d a b g h @
+d a b g h ε
 S A B C
 ACB CbB Ba
 da BC
-g @
-h @
+g ε
+h ε
 
 
 
@@ -42,47 +42,47 @@ aSb c d
 
 
 
-a b d g @
+a b d g ε
 S A D B C
 A
 aBD
-dD @
+dD ε
 b
 g
 
 
 
-( a ) , @
+( a ) , ε
 S L T
 (L) a
 ST
-,ST @
+,ST ε
 
 
 
-a b @
+a b ε
 S A B
 AaAb BbBa
-@
-@
+ε
+ε
 
 
 
-( ) @
+( ) ε
 S A
 (S)A ()A
-SA @
+SA ε
 
 
 
-y x @ b
+y x ε b
 E H G B V A
 yGH
-xH @
+xH ε
 A B
 bV
 A bA
-@
+ε
 
 
 
