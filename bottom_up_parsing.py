@@ -25,7 +25,7 @@ def non_terminal_case(rule, grammar, non_terminals):
     while initial_closure:
         for derivations in initial_closure:
             for derivation in derivations:
-                if (derivations not in calculated or derivations == '@') and rule not in closures:
+                if (derivations not in calculated or derivations == 'ε') and rule not in closures:
                     closure = ('•' + derivations, rule)
                     closures.append(closure)
                     initial_closure.remove(derivations)
@@ -72,7 +72,7 @@ def search_rule(canonical, symbol):
     return rules
 
 
-def get_closure(canonical, grammar, symbols, non_terminals):
+def get_closure(canonical, grammar, symbols, non_terminals, goto):
     r = 1
     calculated_items = set()
     for symbol in symbols:
@@ -83,7 +83,7 @@ def get_closure(canonical, grammar, symbols, non_terminals):
             for closure in closures:
                 rule, item, flag = closure[1], closure[0], False
                 i = item.index('•')
-                if item[len(item) - 1] != '•' and item[i + 1] == symbol and symbol != '@' and closure not in calculated_items:
+                if item[len(item) - 1] != '•' and item[i + 1] == symbol and symbol != 'ε' and closure not in calculated_items:
                     symbol = item[i + 1]
                     for element in item:
                         if element == '•':
@@ -120,8 +120,9 @@ def get_closure(canonical, grammar, symbols, non_terminals):
 
             if new_state and new_state not in canonical:
                 canonical.append(new_state)
-                new_state = {}
+                goto.append((symbol, canonical.index(new_state)))
                 symbols += (get_symbols(canonical[r::]))
+                new_state = {}
                 r += 1
 
 
@@ -140,15 +141,18 @@ def main():
         grammar[non_terminal] = productions
 
     closures = []
+    goto = []
     closures.append(get_item(grammar, non_terminals[0], non_terminals))
     symbols = get_symbols(closures)
-    get_closure(closures, grammar, symbols, non_terminals)
+    get_closure(closures, grammar, symbols, non_terminals, goto)
     
     i = 0
     for closure in closures:
         print(f'state {i}: {closure}')
         i += 1
 
+    print(goto)
+    
 
 if __name__ == '__main__':
     main()
