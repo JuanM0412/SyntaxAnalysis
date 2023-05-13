@@ -1,3 +1,27 @@
+from top_down_parsing import follow_second_rule, follow_third_rule, first, get_derivations
+
+
+def action(derivation, goto, initial_item, non_terminals, index, follow):
+    i = derivation.index('•')
+    if i + 1 < len(derivation) and derivation[i + 1] not in non_terminals:
+        element = derivation[i + 1]
+        for go in goto:
+            if go[0] == element:
+                return (0, go[1], element, index)
+    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] == 'E':
+        for go in goto:
+            if derivation[i - 1] == initial_item:
+                return (2, go[1], derivation[i - 1])
+    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] not in non_terminals:
+        element = derivation[i - 1]
+        for go in goto:
+            if go[0] == element:
+                goto_array = []
+                for symbol in follow:
+                    goto_array.append((1, go[1], symbol, index))
+                return goto_array
+
+
 def get_symbols(canonical):
     symbols_to_calculate = []
     for closures in canonical:
@@ -29,7 +53,7 @@ def non_terminal_case(rule, grammar, non_terminals):
                     closure = ('•' + derivations, rule)
                     closures.append(closure)
                     initial_closure.remove(derivations)
-                    
+
                 if derivation[0] in non_terminals and derivation not in calculated and rule != derivation[0]:
                     rule = derivation
                     tmp = grammar[derivation[0]].copy()
@@ -51,7 +75,7 @@ def check_repetitions(state_to_validate, canonical):
         for element in state_to_validate:
             if element in closure.values():
                 return False
-        
+
     return True
 
 
@@ -93,14 +117,15 @@ def get_closure(canonical, grammar, symbols, non_terminals, goto):
                         if flag == True:
                             new_closure = list(item)
                             j = i + 1
-                            aux, new_closure[j] = new_closure[j], new_closure[i] 
+                            aux, new_closure[j] = new_closure[j], new_closure[i]
                             new_closure[i] = aux
                             new_closure = ''.join(new_closure)
                             index = new_closure.index('•')
                             calculated_items.add(closure)
                             new_closure = [(new_closure, rule)]
                             if index + 1 < len(item) and new_closure[0][0][index + 1] in non_terminals:
-                                add_to_closure = non_terminal_case(new_closure[0][0][index + 1], grammar, non_terminals)
+                                add_to_closure = non_terminal_case(
+                                    new_closure[0][0][index + 1], grammar, non_terminals)
                                 k = 0
                                 while k < len(add_to_closure):
                                     new_closure.append(add_to_closure[k])
@@ -112,7 +137,7 @@ def get_closure(canonical, grammar, symbols, non_terminals, goto):
                                 tmp = new_state[symbol]
                                 tmp = tmp + new_closure
                                 new_state[symbol] = tmp
-    
+
                             break
 
                 if not check_repetitions(new_state.values(), canonical):
@@ -127,7 +152,7 @@ def get_closure(canonical, grammar, symbols, non_terminals, goto):
 
 
 def main():
-    grammar = {}
+    grammar, all_firsts, all_follows = {}, {}, {}
     alphabet = input().split()
     non_terminals = input().split()
     non_terminals.insert(0, '|')
@@ -136,7 +161,7 @@ def main():
         if non_terminal == '|':
             grammar[non_terminal] = list(non_terminals[1])
             continue
-        
+
         productions = input().split()
         grammar[non_terminal] = productions
 
@@ -145,14 +170,41 @@ def main():
     closures.append(get_item(grammar, non_terminals[0], non_terminals))
     symbols = get_symbols(closures)
     get_closure(closures, grammar, symbols, non_terminals, goto)
-    
+
+    for non_terminal in grammar:
+        symbol_first = first(non_terminal, alphabet, grammar)
+        all_firsts[non_terminal] = list(symbol_first)
+
+    for terminal in alphabet:
+        symbol_first = first(terminal, alphabet, grammar)
+        all_firsts[terminal] = list(symbol_first)
+
+    for non_terminal in grammar:
+        rule = get_derivations(grammar, non_terminal)
+        non_trerminal_follow = follow_second_rule(
+            rule, non_terminal, all_firsts, grammar, non_terminals[0]).difference('ε')
+        all_follows[non_terminal] = list(non_trerminal_follow)
+
+    for non_terminal in grammar:
+        rule = get_derivations(grammar, non_terminal)
+        non_terminal_follow = follow_third_rule(
+            rule, non_terminal, all_firsts, grammar, all_follows)
+        all_follows[non_terminal] = list(non_terminal_follow)
+
     i = 0
     for closure in closures:
         print(f'state {i}: {closure}')
         i += 1
 
-    print(goto)
-    
+    actions = []
+    for closure in closures:
+        for items in closure.values():
+            for item in items:
+                calculated = action(
+                    item[0], goto, non_terminals[1], non_terminals, closures.index(closure), all_follows)
+                if calculated not in actions and calculated != None:
+                    actions.append(calculated)
+
 
 if __name__ == '__main__':
     main()
