@@ -178,11 +178,10 @@ def main():
         non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows)
         all_follows[non_terminal] = list(non_terminal_follow)
 
-    print(f'First set: \n{all_firsts}')
-    print(f'Follow set: \n{all_follows}', end='\n')
+    """ print(f'First set: \n{all_firsts}')
+    print(f'Follow set: \n{all_follows}', end='\n') """
 
-    """ parsing = parsing_table(grammar, all_follows,
-                            all_firsts, alphabet, non_terminals)
+    parsing = parsing_table(grammar, all_follows,all_firsts, alphabet, non_terminals)
     if parsing == False:
         print('This grammar is not LL1')
     else:
@@ -199,7 +198,7 @@ def main():
             if result == True:
                 print(f'{string} is valid')
             else:
-                print(f'{string} is invalid') """
+                print(f'{string} is invalid')
 
 
 if __name__ == '__main__':
