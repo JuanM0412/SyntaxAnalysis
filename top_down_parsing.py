@@ -1,4 +1,5 @@
 def first(symbol, alphabet, productions):
+    flag = False
     first_set = set()
     if symbol in alphabet:
         return symbol
@@ -6,21 +7,36 @@ def first(symbol, alphabet, productions):
     derivations = productions[symbol]
     for rule in derivations:
         if rule == 'ε':
-            first_set.update('ε')
+            flag = True
             continue
 
         for element in rule:
             partial_first = first(element, alphabet, productions)
             if 'ε' in partial_first:
                 first_set.update(partial_first)
-
             else:
                 new_set = set(partial_first)
                 new_set.discard('ε')
                 first_set.update(new_set)
+                first_set.discard('ε')
                 break
 
+    if flag:
+        first_set.update('ε')
+
     return first_set
+
+
+def first_of_string(string, firsts):
+    first_of_str = set()
+    for character in string:
+        first = firsts[character]
+        first_of_str.update(first)
+        if 'ε' in first_of_str:
+            continue
+        else:
+            break
+    return first_of_str
 
 
 def get_derivations(grammar, symbol):
@@ -159,14 +175,13 @@ def main():
 
     for non_terminal in grammar:
         rule = get_derivations(grammar, non_terminal)
-        non_terminal_follow = follow_third_rule(
-            rule, non_terminal, all_firsts, grammar, all_follows)
+        non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows)
         all_follows[non_terminal] = list(non_terminal_follow)
 
-    # print(f'First set: \n{all_firsts}')
-    # print(f'Follow set: \n{all_follows}', end='\n')
+    print(f'First set: \n{all_firsts}')
+    print(f'Follow set: \n{all_follows}', end='\n')
 
-    parsing = parsing_table(grammar, all_follows,
+    """ parsing = parsing_table(grammar, all_follows,
                             all_firsts, alphabet, non_terminals)
     if parsing == False:
         print('This grammar is not LL1')
@@ -184,7 +199,7 @@ def main():
             if result == True:
                 print(f'{string} is valid')
             else:
-                print(f'{string} is invalid')
+                print(f'{string} is invalid') """
 
 
 if __name__ == '__main__':
