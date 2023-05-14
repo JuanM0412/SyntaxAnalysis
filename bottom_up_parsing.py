@@ -1,25 +1,37 @@
 from top_down_parsing import follow_second_rule, follow_third_rule, first, get_derivations
 
 
-def action(derivation, goto, initial_item, non_terminals, index, follow):
+def lr_parsing(string, stack):
+    string += '$'
+    a = string[0]
+    while True:
+        s = stack.pop()
+
+
+def action(derivation, goto, non_terminals, index, follow, rule):
     i = derivation.index('•')
     if i + 1 < len(derivation) and derivation[i + 1] not in non_terminals:
         element = derivation[i + 1]
         for go in goto:
             if go[0] == element:
                 return (0, go[1], element, index)
-    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] == 'E':
+    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] == non_terminals[1]:
         for go in goto:
-            if derivation[i - 1] == initial_item:
-                return (2, go[1], derivation[i - 1])
-    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] not in non_terminals:
+            if derivation[i - 1] == non_terminals[1]:
+                return 2
+    elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] != non_terminals[0]:
         element = derivation[i - 1]
         for go in goto:
             if go[0] == element:
                 goto_array = []
-                for symbol in follow:
+                for symbol in follow[rule]:
                     goto_array.append((1, go[1], symbol, index))
                 return goto_array
+    elif i + 1 < len(derivation) and derivation[i + 1] in non_terminals:
+        element = derivation[i + 1]
+        for go in goto:
+            if go[0] == element:
+                return (3, go[1], element, index)
 
 
 def get_symbols(canonical):
@@ -187,8 +199,7 @@ def main():
 
     for non_terminal in grammar:
         rule = get_derivations(grammar, non_terminal)
-        non_terminal_follow = follow_third_rule(
-            rule, non_terminal, all_firsts, grammar, all_follows)
+        non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows)
         all_follows[non_terminal] = list(non_terminal_follow)
 
     i = 0
@@ -200,10 +211,15 @@ def main():
     for closure in closures:
         for items in closure.values():
             for item in items:
-                calculated = action(
-                    item[0], goto, non_terminals[1], non_terminals, closures.index(closure), all_follows)
+                calculated = action(item[0], goto, non_terminals, closures.index(closure), all_follows, item[1])
                 if calculated not in actions and calculated != None:
                     actions.append(calculated)
+
+    print(actions)
+
+    string = input()
+    stack = ['|']
+    lr_parsing(string)
 
 
 if __name__ == '__main__':
