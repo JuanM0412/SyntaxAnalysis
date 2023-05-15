@@ -1,11 +1,54 @@
 from top_down_parsing import follow_second_rule, follow_third_rule, first, get_derivations
 
 
-def lr_parsing(string, stack):
+def get_rule(all_closures, move_to, character):
+    closures = all_closures[move_to]
+    for closure in closures.values():
+        for element in closure:
+            if character in element[0]:
+                return element[1]
+
+
+def find_action(actions, state, symbol):
+    for action in actions:
+        if action[3] == state and action[2] == symbol:
+            if action[0] == 2:
+                return (-1, action[1])
+            
+            return (action[1], action[0])
+
+
+def lr_parsing(string, stack, actions, grammar, closures):
     string += '$'
     a = string[0]
+    i = 0
     while True:
         s = stack.pop()
+        new_state = find_action(actions, s, a)
+        action = new_state[1]
+        if action == 0:
+            move_to = new_state[0]
+            stack.append(move_to)
+            i += 1
+            a = string[i]
+        elif action == 1:
+            move_to = new_state[0]
+            non_terminal = get_rule(closures, move_to, string[i - 1])
+            derivations = grammar[non_terminal]
+            for derivation in derivations:
+                if derivation == string[i - 1]:
+                    j = 0
+                    while j < len(derivation[0]) and stack:
+                        stack.pop()
+                        j += 1
+            
+            stack.append(move_to)
+            new = find_action(actions, move_to, non_terminal)
+            stack.append(new)
+        elif action == 2:
+            return True
+        else:
+            return False
 
 
 def action(derivation, goto, non_terminals, index, follow, rule):
@@ -18,7 +61,7 @@ def action(derivation, goto, non_terminals, index, follow, rule):
     elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] == non_terminals[1]:
         for go in goto:
             if derivation[i - 1] == non_terminals[1]:
-                return 2
+                return (2, -1, '$', index)
     elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] != non_terminals[0]:
         element = derivation[i - 1]
         for go in goto:
@@ -213,13 +256,21 @@ def main():
             for item in items:
                 calculated = action(item[0], goto, non_terminals, closures.index(closure), all_follows, item[1])
                 if calculated not in actions and calculated != None:
-                    actions.append(calculated)
+                    if type(calculated) == list:
+                        for element in calculated:
+                            actions.append(element)
+                    else:
+                        actions.append(calculated)
 
     print(actions)
 
     string = input()
-    stack = ['|']
-    lr_parsing(string)
+    stack = [0]
+    test = lr_parsing(string, stack, actions, grammar, closures)
+    if test:
+        print('Valid')
+    else:
+        print('Invalid')
 
 
 if __name__ == '__main__':
