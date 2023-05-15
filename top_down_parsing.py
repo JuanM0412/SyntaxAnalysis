@@ -10,7 +10,12 @@ def first(symbol, alphabet, productions):
             flag = True
             continue
 
+        first_symbol = True
         for element in rule:
+            if element == symbol and first_symbol:
+                break
+
+            first_symbol = False
             partial_first = first(element, alphabet, productions)
             if 'ε' in partial_first:
                 first_set.update(partial_first)
