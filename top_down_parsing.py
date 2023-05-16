@@ -11,6 +11,7 @@ def first(symbol, alphabet, productions):
             continue
 
         first_symbol = True
+        derivation_with_epsilon = True
         for element in rule:
             if element == symbol and first_symbol:
                 break
@@ -18,12 +19,18 @@ def first(symbol, alphabet, productions):
             first_symbol = False
             partial_first = first(element, alphabet, productions)
             if 'ε' in partial_first:
-                first_set.update(partial_first)
+                new_set = set(partial_first)
+                new_set.discard('ε')
+                first_set.update(new_set)
             else:
+                derivation_with_epsilon = False
                 new_set = set(partial_first)
                 new_set.discard('ε')
                 first_set.update(new_set)
                 break
+
+        if derivation_with_epsilon:
+            first_set.update('ε')
 
     if flag:
         first_set.update('ε')
@@ -33,14 +40,23 @@ def first(symbol, alphabet, productions):
 
 def first_of_string(string, firsts):
     first_of_str = set()
+    flag = True
     for character in string:
         first = firsts[character]
-        first_of_str.update(first)
-        if 'ε' in first_of_str:
+        if 'ε' in first:
+            new_set = set(first)
+            new_set.discard('ε')
+            first_of_str.update(new_set)
             continue
         else:
+            flag = False
+            first_of_str.update(first)
+            first_of_str.discard('ε')
             break
-        
+
+    if flag:
+        first_of_str.update('ε')    
+    
     return first_of_str
 
 
@@ -89,7 +105,7 @@ def follow_third_rule(rules, symbol, grammar, follows, firsts):
                     if derivation[i].isupper():
                         if derivation[i] != symbol and follows[derivation[i]] and 'ε' in first_of_string(derivation[i::], firsts):
                             follow_set.update(set(follows[rule]))
-                        elif derivation[i] != symbol and not follows[derivation[i]] and 'ε' in firsts[derivation[i]]:
+                        elif derivation[i] != symbol and not follows[derivation[i]] and 'ε' in first_of_string(derivation[i::], firsts):
                             follow_set.update(follow_third_rule(get_derivations(grammar, derivation[i]), derivation[i], grammar, follows, firsts))
                         elif symbol == last_element and rule != symbol:
                             follow_set.update(set(follows[rule]))
