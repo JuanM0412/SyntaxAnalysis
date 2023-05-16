@@ -23,7 +23,6 @@ def first(symbol, alphabet, productions):
                 new_set = set(partial_first)
                 new_set.discard('ε')
                 first_set.update(new_set)
-                first_set.discard('ε')
                 break
 
     if flag:
@@ -41,6 +40,7 @@ def first_of_string(string, firsts):
             continue
         else:
             break
+        
     return first_of_str
 
 
@@ -65,42 +65,36 @@ def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
             for element in derivation:
                 if element == symbol:
                     past_element = True
+                    continue
 
-                if element.isupper() and past_element == True:
-                    if element != symbol and 'ε' in firsts[element]:
-                        follow_set.update(firsts[element])
-                        if 'ε' not in firsts[element]:
-                            past_element = False
-
-                if not element.isupper() and past_element == True:
+                if past_element == True and element != symbol:
                     follow_set.update(firsts[element])
-                    past_element = False
+                    if 'ε' not in firsts[element] or not element.isupper():
+                        past_element = False
 
             past_element = False
 
     return follow_set
 
 
-def follow_third_rule(rules, symbol, firsts, grammar, follows):
+def follow_third_rule(rules, symbol, grammar, follows, firsts):
     follow_set = set(follows[symbol])
-    past_element = False
 
     for rule in rules:
         for derivation in grammar[rule]:
-            last_element = derivation[len(derivation) - 1]
-            for element in derivation:
-                if element == symbol:
-                    past_element = True
+            if symbol in derivation:
+                last_element = derivation[len(derivation) - 1]
+                i = derivation.index(symbol)
+                while i < len(derivation):
+                    if derivation[i].isupper():
+                        if derivation[i] != symbol and follows[derivation[i]] and 'ε' in first_of_string(derivation[i::], firsts):
+                            follow_set.update(set(follows[rule]))
+                        elif derivation[i] != symbol and not follows[derivation[i]] and 'ε' in firsts[derivation[i]]:
+                            follow_set.update(follow_third_rule(get_derivations(grammar, derivation[i]), derivation[i], grammar, follows, firsts))
+                        elif symbol == last_element and rule != symbol:
+                            follow_set.update(set(follows[rule]))
 
-                if element.isupper() and past_element == True:
-                    if element != symbol and 'ε' in firsts[element]:
-                        follow_set.update(set(follows[rule]))
-
-                    if symbol == last_element and rule != symbol:
-                        follow_set.update(set(follows[rule]))
-                        past_element = False
-
-        past_element = False
+                    i += 1
 
     return follow_set
 
@@ -180,13 +174,13 @@ def main():
 
     for non_terminal in grammar:
         rule = get_derivations(grammar, non_terminal)
-        non_terminal_follow = follow_third_rule(rule, non_terminal, all_firsts, grammar, all_follows)
+        non_terminal_follow = follow_third_rule(rule, non_terminal, grammar, all_follows, all_firsts)
         all_follows[non_terminal] = list(non_terminal_follow)
 
-    """ print(f'First set: \n{all_firsts}')
-    print(f'Follow set: \n{all_follows}', end='\n') """
+    print(f'First set: \n{all_firsts}')
+    print(f'Follow set: \n{all_follows}', end='\n')
 
-    parsing = parsing_table(grammar, all_follows,all_firsts, alphabet, non_terminals)
+    """ parsing = parsing_table(grammar, all_follows,all_firsts, alphabet, non_terminals)
     if parsing == False:
         print('This grammar is not LL1')
     else:
@@ -203,7 +197,7 @@ def main():
             if result == True:
                 print(f'{string} is valid')
             else:
-                print(f'{string} is invalid')
+                print(f'{string} is invalid') """
 
 
 if __name__ == '__main__':
