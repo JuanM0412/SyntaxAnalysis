@@ -1,3 +1,6 @@
+from collections import deque
+
+
 def first(symbol, alphabet, productions):
     flag = False
     first_set = set()
@@ -14,6 +17,7 @@ def first(symbol, alphabet, productions):
         derivation_with_epsilon = True
         for element in rule:
             if element == symbol and first_symbol:
+                derivation_with_epsilon = False
                 break
 
             first_symbol = False
@@ -115,52 +119,52 @@ def follow_third_rule(rules, symbol, grammar, follows, firsts):
     return follow_set
 
 
-def parsing_table(grammar, follow, first, alphabet, non_terminals):
+def parsing_table(grammar, follows, firsts, alphabet, non_terminals):
     parsing_table = {}
-    for rule, derivations in grammar.items():
-        for derivation in derivations:
-            if ((derivation[0] in alphabet and derivation[0] != 'ε') or (derivation[0] in non_terminals and 'ε' not in first[derivation[0]])) and (rule, derivation[0]) not in parsing_table:
-                if (derivation[0] in non_terminals):
-                    for terminal in first[derivation[0]]:
-                        parsing_table[(rule, terminal)] = derivation
+    for rule in grammar: 
+        for derivation in grammar[rule]:
+            first_of_derivation = first_of_string(derivation, firsts)
+            for first in first_of_derivation:
+                if first == 'ε':
+                    for follow in follows[rule]:
+                        if (rule, follow) not in parsing_table.keys():
+                            parsing_table[(rule, follow)] = derivation
+                        else:
+                            return False
+
+                if (rule, first) not in parsing_table.keys():
+                        if first != 'ε':
+                            parsing_table[(rule, first)] = derivation
                 else:
-                    parsing_table[(rule, derivation[0])] = derivation
-
-            elif 'ε' in first[derivation[0]] and (rule, derivation[0]) not in parsing_table:
-                if '$' in follow[rule]:
-                    parsing_table[(rule, '$')] = derivation
-                for terminal in follow[rule]:
-                    parsing_table[(rule, terminal)] = derivation
-
-            elif (rule, derivation[0]) in parsing_table:
-                return False
+                    return False
 
     return parsing_table
 
 
-def analyzer(string, stack, alphabet, table):
-    stack = stack.copy()
-    a = string[0]
-    symbol = stack.pop()
-    i = 1
-    while symbol != '$':
-        if symbol == a:
-            if i == len(string):
-                break
-            a = string[i]
-            i += 1
-            symbol = stack.pop()
-        elif symbol in alphabet:
+def analyzer(string, alphabet, table, initial_symbol):
+    stack = deque()
+    stack.append('$')
+    stack.append(initial_symbol)
+    index = 0
+    top = stack.pop()
+    while deque:
+        if top == '$' and string[index] == '$':
+            break
+        elif top == string[index]:
+            top = stack.pop()
+            index += 1
+        elif top in alphabet:
             return 'Error'
-        elif (symbol, a) not in table:
+        elif (top, string[index]) not in table:
             return 'Error'
-        elif (symbol, a) in table:
-            derivation = table[(symbol, a)]
+        elif (top, string[index]) in table:
+            derivation = table[(top, string[index])]
             for element in derivation[::-1]:
-                stack.append(element)
-            symbol = stack.pop()
-            if symbol == 'ε':
-                symbol = stack.pop()
+                stack.append(element)    
+            
+            top = stack.pop()
+            while top == 'ε':
+                top = stack.pop()
 
     return True
 
@@ -193,27 +197,20 @@ def main():
         non_terminal_follow = follow_third_rule(rule, non_terminal, grammar, all_follows, all_firsts)
         all_follows[non_terminal] = list(non_terminal_follow)
 
-    print(f'First set: \n{all_firsts}')
-    print(f'Follow set: \n{all_follows}', end='\n')
-
-    """ parsing = parsing_table(grammar, all_follows,all_firsts, alphabet, non_terminals)
+    parsing = parsing_table(grammar, all_follows,all_firsts, alphabet, non_terminals)
     if parsing == False:
         print('This grammar is not LL1')
     else:
-        stack = []
-        stack.append('$')
-        stack.append(non_terminals[0])
-
         while True:
             string = input()
             if string == ';':
                 break
 
-            result = analyzer(string, stack, alphabet, parsing)
+            result = analyzer(string + '$', alphabet, parsing, non_terminals[0])
             if result == True:
                 print(f'{string} is valid')
             else:
-                print(f'{string} is invalid') """
+                print(f'{string} is invalid')
 
 
 if __name__ == '__main__':
