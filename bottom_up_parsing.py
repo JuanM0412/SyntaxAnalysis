@@ -152,9 +152,8 @@ def search_rule(canonical, symbol):
                     items.append(element)
                     came_from.append(canonical.index(closure))
 
-            if items not in rules:
-                rules.append(items)
-                tmp.append(came_from)
+            rules.append(items)
+            tmp.append(came_from)
 
     return (rules, tmp)
 
@@ -166,6 +165,7 @@ def get_closure(canonical, grammar, symbols, non_terminals, goto):
         to_calculate = search_rule(canonical, symbol)
         closure_to_calculate, came_from = to_calculate[0], to_calculate[1]
         new_closure = ''
+        q = 0
         for closures in closure_to_calculate:
             for closure in closures:
                 rule, item, flag = closure[1], closure[0], False
@@ -203,7 +203,11 @@ def get_closure(canonical, grammar, symbols, non_terminals, goto):
                             break
 
                 if not check_repetitions(new_state.values(), canonical):
+                    m = closure_to_calculate.index(closures)
+                    goto.append((symbol, canonical.index(new_state), came_from[q][0]))
                     new_state = {}
+
+            q += 1
 
             if new_state and new_state not in canonical:
                 m = closure_to_calculate.index(closures)
