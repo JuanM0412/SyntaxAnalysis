@@ -77,10 +77,11 @@ def action(derivation, goto, non_terminals, index, follow, rule, number_rule, gr
     elif '•' == derivation[len(derivation) - 1] and derivation[i - 1] != non_terminals[1]:
         element = derivation[i - 1]
         for go in goto:
-            if go[0] == element:
+            if go[0] == element and go[1] == index:
                 goto_array = []
                 for symbol in follow[rule]:
                     goto_array.append((1, go[1], symbol, find_rule(derivation.replace('•', ''), rule, grammar, number_rule), rule))
+                
                 return goto_array
 
 
