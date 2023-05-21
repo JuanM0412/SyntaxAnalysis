@@ -14,7 +14,7 @@ SS+ SS* a
 
 
 
-a + *
+a + * ε
 S A
 aA
 S+A S*A ε
