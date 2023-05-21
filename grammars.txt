@@ -8,11 +8,40 @@ FY
 
 
 
+a + *
+S
+SS+ SS* a
+
+
+
+a + *
+S A
+aA
+S+A S*A ε
+
+
+
+g j + b n ε
+Z S X O 
+++S ε
+n+S ε
+b+O ε
+ε
+
+
+
 + i * ( )
 E T F
 E+T T
 T*F F
 (E) i
+
+
+
+a b
+S A
+AA
+aA b
 
 
 
@@ -52,6 +81,15 @@ g
 
 
 
+a d b g
+S A B C
+A
+aB Ad
+b
+g
+
+
+
 ( a ) , ε
 S L T
 (L) a
@@ -72,6 +110,12 @@ AaAb BbBa
 S A
 (S)A ()A
 SA ε
+
+
+
+( )
+S
+(S) ()S ()
 
 
 
