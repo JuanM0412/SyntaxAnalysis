@@ -5,13 +5,29 @@ TR
 FY
 *FY ε
 (E) i
+---------------------
+(i)
+i*i
+(i*i+(i*i))+(i+i)*(i)
+---------------------
+)i(
+i-i
+i(i*i)
 
 
 
 a + *
 S
 SS+ SS* a
-
+---------------------
+aa+
+aa*
+aaa+*
+aaaaaa*+*+*
+---------------------
+aa
++*
+a*+
 
 
 a + * ε
@@ -27,6 +43,14 @@ Z S X O
 n+S ε
 b+O ε
 ε
+---------------------
+ε
+++
+++n+n+
+---------------------
++
+++n
+++n++
 
 
 
@@ -35,6 +59,14 @@ E T F
 E+T T
 T*F F
 (E) i
+---------------------
+(i)
+i*i
+(i*i+(i*i))+(i+i)*(i)
+---------------------
+)i(
+i-i
+i(i*i)
 
 
 
@@ -42,6 +74,14 @@ a b
 S A
 AA
 aA b
+---------------------
+bb
+aaaaaaabb
+abb
+---------------------
+a
+aaaaab
+ba
 
 
 
@@ -53,6 +93,14 @@ bC ε
 EF
 g ε
 f ε
+---------------------
+ach
+acbh
+acbbgfh
+---------------------
+ah
+ch
+aacbbgfhhh
 
 
 
@@ -68,6 +116,14 @@ h ε
 a b c d
 S
 aSb c d
+---------------------
+aaaacbbbb
+d
+aadbb
+---------------------
+bbcaa
+dc
+acdb
 
 
 
@@ -78,6 +134,14 @@ aBD
 dD ε
 b
 g
+---------------------
+ab
+abdddddddddddddd
+abdd
+---------------------
+adddd
+d
+abbbbd
 
 
 
@@ -87,6 +151,14 @@ A
 aB Ad
 b
 g
+---------------------
+ab
+abdddddddddddddd
+abdd
+---------------------
+adddd
+d
+abbbbd
 
 
 
@@ -95,6 +167,14 @@ S L T
 (L) a
 ST
 ,ST ε
+---------------------
+a
+((a,a),(a,a))
+(((a,a),a),a)
+---------------------
+a,a
+(a,(a,a))
+()
 
 
 
@@ -103,19 +183,13 @@ S A B
 AaAb BbBa
 ε
 ε
-
-
-
-( ) ε
-S A
-(S)A ()A
-SA ε
-
-
-
-( )
-S
-(S) ()S ()
+---------------------
+ab
+ba
+---------------------
+a
+b
+abbba
 
 
 
@@ -127,9 +201,25 @@ A B
 bV
 A bA
 ε
+---------------------
+yx
+ybbxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ybx
+---------------------
+ybbbx
+yybx
+yyyyybbbb
 
 
 
 a b c
 S
 aSa bSb c
+---------------------
+aca
+abbacabba
+bbbacabbb
+---------------------
+cab
+acb
+cc

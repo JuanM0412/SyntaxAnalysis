@@ -1,4 +1,4 @@
-from top_down_parsing import follow_second_rule, follow_third_rule, first, get_derivations
+from src.first_and_follow import calculate_first, calculate_follow
 
 
 def find_rule(derivation, non_terminal, grammar, number_rule):
@@ -251,8 +251,9 @@ def create_table(actions):
     return lr_parsing_table
 
 
-def main():
+def bottom_up():
     grammar, extend_grammar, all_firsts, all_follows, number_rule = {}, {}, {}, {}, {}
+    closures, goto, actions = [], [], []
     alphabet = input().split()
     non_terminals = input().split()
 
@@ -275,29 +276,11 @@ def main():
 
             i += 1
             
-    for non_terminal in grammar:
-        symbol_first = first(non_terminal, alphabet, grammar)
-        all_firsts[non_terminal] = list(symbol_first)
-
-    for terminal in alphabet:
-        symbol_first = first(terminal, alphabet, grammar)
-        all_firsts[terminal] = list(symbol_first)
-
-    for non_terminal in grammar:
-        rule = get_derivations(grammar, non_terminal)
-        non_trerminal_follow = follow_second_rule(rule, non_terminal, all_firsts, grammar, non_terminals[1]).difference('ε')
-        all_follows[non_terminal] = list(non_trerminal_follow)
-
-    for non_terminal in grammar:
-        rule = get_derivations(grammar, non_terminal)
-        non_terminal_follow = follow_third_rule(rule, non_terminal, grammar, all_follows, all_firsts)
-        all_follows[non_terminal] = list(non_terminal_follow)
-
-    closures, goto = [], []
+    all_firsts = calculate_first(grammar, alphabet)
+    all_follows = calculate_follow(grammar, all_firsts, non_terminals[1])
     closures.append(get_item(extend_grammar, non_terminals[0], non_terminals, goto))
     symbols = get_symbols(closures)
     get_closure(closures, extend_grammar, symbols, non_terminals, goto)
-    actions = []
     for closure in closures:
         for items in closure.values():
             for item in items:
@@ -324,7 +307,3 @@ def main():
                 print(f'{string} is invalid')
     else:
         print('Grammar is not LR(0)')
-
-
-if __name__ == '__main__':
-    main()
