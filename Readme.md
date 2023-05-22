@@ -1,4 +1,8 @@
+<div align="center">
+
 # Final project for the subject Formal Languages and Compilers
+
+</div>
 
 ***
 
@@ -24,7 +28,7 @@ Here you are going to find the follow archives:
 
 You can also see a directory called `src`. Here are the parsers and the grammar generator.
 
-To run the program we recommend using Python 3.10.10 because the program was built using this version of Python.
+**To run the program we recommend using Python 3.10.10 because the program was built using this version of Python.**
 
 If you don't know your Python version you can use the follow command if you are using a Linux system:
 ```
@@ -45,13 +49,13 @@ python main.py
 ```
 To use parsers such as the grammar generator, the following options are available:
 
-`python main.py -g`. Where the -g option means grammar generator. This will execute the grammar generator.
+* `python main.py -g`. Where the -g option means grammar generator. This will execute the grammar generator.
 
-`python main.py -td`. Where the -td option means Top-Down parsing. This will execute the Top-Down parsing.
+* `python main.py -td`. Where the -td option means Top-Down parsing. This will execute the Top-Down parsing.
 
-`python main.py -bu`. Where the -bu option means Bottom-Up parsing. This will execute the Bottom-Up parsing.
+* `python main.py -bu`. Where the -bu option means Bottom-Up parsing. This will execute the Bottom-Up parsing.
 
-`python main.py`. This will show you a menu, where you can choose among one of the three options (g, td, bu).
+* `python main.py`. This will show you a menu, where you can choose among one of the three options (g, td, bu).
 
 If you have choose one of the parsers, you have to put the grammar as follows:
 ```
