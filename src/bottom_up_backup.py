@@ -1,4 +1,4 @@
-from src.top_down_parsing import follow_second_rule, follow_third_rule, first, get_derivations
+from top_down_backup import follow_second_rule, follow_third_rule, first, get_derivations
 
 
 def find_rule(derivation, non_terminal, grammar, number_rule):

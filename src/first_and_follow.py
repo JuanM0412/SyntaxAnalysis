@@ -99,7 +99,7 @@ def get_derivations(grammar, symbol):
 # symbol is the non-terminal that we are going to calculate his follow
 # firsts is where we store the first of each symbol of the grammmar
 # start_symbol is the initial symbol of the grammar
-def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
+def follow_second_rule(rules, symbol, firsts, grammar, start_symbol, alphabet):
     follow_set = set()
     past_element = False
     if symbol == start_symbol:
@@ -114,6 +114,8 @@ def follow_second_rule(rules, symbol, firsts, grammar, start_symbol):
 
                 if past_element == True:
                     follow_set.update(firsts[element])
+                    if element in alphabet:
+                        past_element = False
                     
             past_element = False
 
@@ -155,14 +157,14 @@ def calculate_first(grammar, alphabet):
     return all_firsts
 
 
-def calculate_follow(grammar, all_firsts, initial_symbol):
+def calculate_follow(grammar, all_firsts, initial_symbol, alphabet):
     all_follows = {}
     # for each non terminal inside the grammar we calculate the follow. Until the line 220
     for non_terminal in grammar:
         # when we call this function (get_derivations) we get the rules of the grammar when we can calculate the follow for the non-terminal that we want
         rule = get_derivations(grammar, non_terminal)
         # we call the function who use the second rule of the follow, which is going to return a partial follow set
-        non_trerminal_follow = follow_second_rule(rule, non_terminal, all_firsts, grammar, initial_symbol).difference('ε')
+        non_trerminal_follow = follow_second_rule(rule, non_terminal, all_firsts, grammar, initial_symbol, alphabet).difference('ε')
         # we store the provitional follow in a dictionary {non-terminal 1: [follow], ..., non-terminal n: [follow]}
         all_follows[non_terminal] = list(non_trerminal_follow)
 
