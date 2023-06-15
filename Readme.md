@@ -117,5 +117,5 @@ derivation_1 for the non-terminal_n ... derivation_m for the non-terminal_n
 ***
 
 ## Contributors
-* ***Juan Manuel Gómez***
-* ***Miguel Ángel Hoyos***
+* ***[Juan Manuel Gómez](https://github.com/JuanM0412)***
+* ***[Miguel Ángel Hoyos](https://github.com/miguelhoyosve)***
