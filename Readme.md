@@ -16,21 +16,21 @@ To build this project simply clone this repository using the following command:
 ```
 git clone https://github.com/JuanM0412/SyntaxAnalysis.git
 ```
-This will create a directory call SyntaxAnalysis, you can acces to this directory using:
+This will create a directory called SyntaxAnalysis, you can access to this directory using:
 ```
 cd SyntaxAnalysis
 ```
-Here you are going to find the follow archives:
+Here you are going to find the following archives:
 
 * `main.py`. This is the file you must run to use one of the parsers or the grammar generator.
 * `grammars.txt`. Here you can find some grammars to test in the parsers, as well as some strings.
-* `Readme.med`. This file.
+* `Readme.md`. This file.
 
 You can also see a directory called `src`. Here are the parsers and the grammar generator.
 
 **To run the program we recommend using Python 3.10.10 because the program was built using this version of Python.**
 
-If you don't know your Python version you can use the follow command if you are using a Linux system:
+If you don't know your Python version you can use the following command if you are using a Linux system:
 ```
 python -V
 ```
@@ -57,7 +57,7 @@ To use parsers such as the grammar generator, the following options are availabl
 
 * `python main.py`. This will show you a menu, where you can choose among one of the three options (g, td, bu).
 
-If you have choose one of the parsers, you have to put the grammar as follows:
+If you have chosen one of the parsers, you have to put the grammar as follows:
 ```
 terminal_1 terminal_2 ... terminal_n
 non-terminal_1 non-terminal_2 ... non-terminal_n
@@ -68,8 +68,8 @@ derivation_1 for the non-terminal_n ... derivation_m for the non-terminal_n
 ```
 
 ### Some clarifications
-* **The first non-terminal in the line of the non-terminals symbols is going to be the initial symbol of the grammar.**
-* **Each terminal, non-terminal and derivations must be separated for one space.**
+* **The first non-terminal in the line of the non-terminal symbols is going to be the initial symbol of the grammar.**
+* **Each terminal, non-terminal, and derivations must be separated for one space.**
 
 ***
 
